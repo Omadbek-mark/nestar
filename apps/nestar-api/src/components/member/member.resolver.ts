@@ -12,6 +12,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { error } from 'console';
 import { shapeIntoMongoDbjectId } from '../../libs/config';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class MemberResolver {
@@ -37,7 +38,7 @@ export class MemberResolver {
     return `Hi ${memberNick}`;
   }
 
-  @Roles(MemberType.USER, MemberType.AGENT)
+  @Roles(MemberType.USER, MemberType.AGENT, MemberType.ADMIN)
   @UseGuards(RolesGuard)
   @Query(() => String)
   public async checkAuthRoles(@AuthMember() authMember: Member): Promise<string> {
@@ -56,12 +57,12 @@ export class MemberResolver {
     return this.memberService.updateMember(memberId, input);
   }
 
-
+  @UseGuards(WithoutGuard)
   @Query(() => Member)
-  public async getMember(@Args('memberId') input: string): Promise<Member> {
+  public async getMember(@Args('memberId') input: string, @AuthMember('_id') memberId: mongoose.ObjectId): Promise<Member> {
     console.log('Query: getMember');
     const targetId = shapeIntoMongoDbjectId(input);
-      return this.memberService.getMember(targetId);
+      return this.memberService.getMember(memberId, targetId);
   }
     
   /** ADMIN **/
