@@ -10,14 +10,14 @@ import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
-    MemberModule,
-    AuthModule,
-    PropertyModule,
-    BoardArticleModule,
-    LikeModule,
-    ViewModule,
-    CommentModule,
-    FollowModule,
+   MemberModule,
+   AuthModule,
+   PropertyModule,
+   BoardArticleModule,
+   LikeModule,
+   ViewModule,
+   CommentModule,
+   FollowModule,
   ],
 })
 export class ComponentsModule {}
