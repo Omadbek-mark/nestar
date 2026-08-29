@@ -1,17 +1,17 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PropertyService } from './property.service';
 import { Properties, Property } from '../../libs/dto/property/property';
-import { PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
+import { AgentPropertiesInquiry, PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
 import { MemberType } from '../../libs/enums/member.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Member } from '../../libs/dto/member/member';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
-import * as mongoose from 'mongoose';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { PropertyUpdate } from '../../libs/dto/property/property.update';
+import type { ObjectId } from 'mongoose';
 
 @Resolver()
 export class PropertyResolver {
@@ -20,7 +20,7 @@ export class PropertyResolver {
   @Roles(MemberType.AGENT)
   @UseGuards(RolesGuard)
   @Mutation(() => Property) 
-  public async createProperty(@Args("input") input: PropertyInput, @AuthMember('_id') memberId: mongoose.ObjectId
+  public async createProperty(@Args("input") input: PropertyInput, @AuthMember('_id') memberId: ObjectId
   ): Promise<Property> {
     console.log('Mutation createProperty');
     input.memberId = memberId;
@@ -31,7 +31,7 @@ export class PropertyResolver {
 	@Query((returns) => Property)
 	public async getProperty(
 		@Args('propertyId') input: string,
-		@AuthMember('_id') memberId: mongoose.ObjectId,
+		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Property> {
 		console.log('Query: getProperty');
 		const propertyId = shapeIntoMongoObjectId(input);
@@ -43,7 +43,7 @@ export class PropertyResolver {
 	@Mutation((returns) => Property)
 	public async updateProperty(
 		@Args('input') input: PropertyUpdate,
-		@AuthMember('_id') memberId: mongoose.ObjectId,
+		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Property> {
 		console.log('Mutation: updateProperty');
 		input._id = shapeIntoMongoObjectId(input._id);
@@ -54,10 +54,21 @@ export class PropertyResolver {
 	@Query((returns) => Properties)
 	public async getProperties(
 		@Args('input') input: PropertiesInquiry,
-		@AuthMember('_id') memberId: mongoose.ObjectId,
+		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Properties> {
 		console.log('Query: getProperties');
 		return await this.propertyService.getProperties(memberId, input);
-	}
+  }
+  
+  @Roles(MemberType.AGENT)
+@UseGuards(RolesGuard)
+@Query((returns) => Properties)
+public async getAgentProperties(
+	@Args('input') input: AgentPropertiesInquiry,
+	@AuthMember('_id') memberId: ObjectId,
+): Promise<Properties> {
+	console.log('Query: getAgentProperties');
+	return await this.propertyService.getAgentProperties(memberId, input);
+}
 }
 
