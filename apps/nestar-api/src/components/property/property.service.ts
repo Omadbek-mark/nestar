@@ -55,7 +55,7 @@ export class PropertyService {
 			}
 
 			// meLiked
-		}
+		} 
 
 		targetProperty.memberData = await this.memberService.getMember(null as any, targetProperty.memberId);
 		return targetProperty;
