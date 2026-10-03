@@ -32,7 +32,7 @@ export class MemberUpdate {
   @Field(() => String, { nullable: true })
   memberPassword?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @Length(3, 100)
   @Field(() => String, { nullable: true })
   memberFullName?: string;
