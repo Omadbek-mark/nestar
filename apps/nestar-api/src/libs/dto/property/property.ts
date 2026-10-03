@@ -80,7 +80,7 @@ export class Property {
   @Field(() => Date)
   updatedAt!: Date;
   
-  /** from affregation **/
+  /** from aggregation **/
 
   @Field(() => [MeLiked], { nullable: true })
   meLiked?: MeLiked[];
